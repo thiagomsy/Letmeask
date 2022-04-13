@@ -4,6 +4,7 @@ import { AuthContextProvider } from './contexts/AuthContext';
 
 import { Home } from "./pages/Home";
 import { NewRoom } from "./pages/NewRoom";
+import { Room } from "./pages/Room";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />}/>
           <Route path="/salas/nova" element={<NewRoom />}/>
+          <Route path="/salas/:id" element={<Room />}/>
         </Routes>
       </AuthContextProvider>
     </BrowserRouter>
