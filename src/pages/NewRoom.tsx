@@ -28,7 +28,7 @@ export function NewRoom() {
       authorId: user?.id,
     });
 
-    navigate(`/salas/${firebaseRoom.key}`);
+    navigate(`/admin/salas/${firebaseRoom.key}`);
   };
 
   return (

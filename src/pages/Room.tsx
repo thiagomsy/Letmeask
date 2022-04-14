@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import logoImg from '../assets/images/logo.svg';
 import { Button } from '../components/Button';
@@ -19,11 +19,11 @@ export function Room() {
   const { user } = useAuth();
   const params = useParams<RoomParams>();
   const [newQuestion, setNewQuestion] = useState('');
+  const navigate = useNavigate();
 
   const roomId = params.id;
 
   const { title, questions } = useRoom(roomId!);
-
 
   async function handleSendQuestion(event: FormEvent) {
     event.preventDefault();
@@ -65,7 +65,7 @@ export function Room() {
     <div id="page-room">
       <header>
         <div className="content">
-          <img src={logoImg} alt="Letmeask" />
+          <img onClick={() => {navigate('/')}} src={logoImg} alt="Letmeask" />
           <RoomCode code={roomId!}/>
         </div>
       </header>
@@ -73,8 +73,7 @@ export function Room() {
       <main className="content">
         <div className="room-title">
           <h1>Sala {title}</h1>
-          {questions.length && <span>{questions.length} Pergunta(s)</span>
-          }
+          <span>{questions.length} Pergunta(s)</span>
         </div>
 
         <form onSubmit={handleSendQuestion}>

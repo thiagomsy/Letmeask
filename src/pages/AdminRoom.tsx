@@ -69,8 +69,7 @@ export function AdminRoom() {
       <main className="content">
         <div className="room-title">
           <h1>Sala {title}</h1>
-          {questions.length && <span>{questions.length} Pergunta(s)</span>
-          }
+            <span>{questions.length} Pergunta(s)</span>
         </div>
 
         <div className="question-list">
