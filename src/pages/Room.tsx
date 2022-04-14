@@ -19,11 +19,28 @@ export function Room() {
   const { user } = useAuth();
   const params = useParams<RoomParams>();
   const [newQuestion, setNewQuestion] = useState('');
+  const [roomEndedAt, setRoomEndedAt] = useState();
   const navigate = useNavigate();
 
   const roomId = params.id;
 
   const { title, questions } = useRoom(roomId!);
+
+  useEffect(() => {
+    const roomRef = database.ref(`rooms/${roomId}`);
+    
+    roomRef.on('value', room => {
+      const endedAt = room.val().endedAt;
+
+      setRoomEndedAt(endedAt);
+    })
+
+    return () => {
+      roomRef.off('value');
+    }
+  }, [roomEndedAt]);
+
+  const endedAtTime = new Date(roomEndedAt!).toLocaleDateString("en-GB")
 
   async function handleSendQuestion(event: FormEvent) {
     event.preventDefault();
@@ -76,25 +93,34 @@ export function Room() {
           <span>{questions.length} Pergunta(s)</span>
         </div>
 
-        <form onSubmit={handleSendQuestion}>
-          <textarea 
-            placeholder="O que você quer perguntar?"
-            onChange={event => setNewQuestion(event.target.value)}
-            value={newQuestion}
-          />
-
-          <div className="form-footer">
-            { user ? (
-              <div className="user-info">
-                <img src={user.avatar} alt={user.name} />
-                <span>{user.name}</span>
-              </div>
-            ) : (
-              <span>Para enviar uma pergunta, <button>faça seu login</button></span>
-            ) }
-            <Button type='submit' disabled={!user}>Enviar Pergunta</Button>
+        {roomEndedAt &&
+          <div className="ended-room">
+            <p>Essa sala foi encerrada pelo Host no dia {endedAtTime}.</p>
           </div>
-        </form>
+        }
+        {!roomEndedAt &&
+          <form onSubmit={handleSendQuestion}>
+            <textarea 
+              placeholder="O que você quer perguntar?"
+              onChange={event => setNewQuestion(event.target.value)}
+              value={newQuestion}
+            />
+
+            <div className="form-footer">
+              { user ? (
+                <div className="user-info">
+                  <img src={user.avatar} alt={user.name} />
+                  <span>{user.name}</span>
+                </div>
+              ) : (
+                <span>Para enviar uma pergunta, <button>faça seu login</button></span>
+              ) }
+              {!roomEndedAt &&
+                <Button type='submit' disabled={!user}>Enviar Pergunta</Button>
+              }
+            </div>
+          </form>
+        }
 
         <div className="question-list">
           {questions.map(question => {
